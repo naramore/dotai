@@ -1,0 +1,22 @@
+[
+  {"query": "I need to create an AGENTS.md file for our new Go microservice that handles payment processing. It has a Makefile, uses gRPC, and deploys via Helm.", "should_trigger": true},
+  {"query": "This repo doesn't have any agent instructions. Can you audit it and write an AGENTS.md based on what you find?", "should_trigger": true},
+  {"query": "We have a monorepo with 12 packages and no agent context files. I want AGENTS.md at the root and in each subpackage.", "should_trigger": true},
+  {"query": "Our AGENTS.md is outdated — we switched from Make to Bazel six months ago and none of the commands work anymore. Help me update it.", "should_trigger": true},
+  {"query": "I'm setting up agent readiness for our infrastructure repos. They need safety rails, forbidden actions, and credential handling documented for AI agents.", "should_trigger": true},
+  {"query": "What should go in the agent operating model for this security-critical repo? Agents keep modifying files they shouldn't.", "should_trigger": true},
+  {"query": "Write agent instructions for this Python ML training pipeline. It has complex environment setup, GPU requirements, and dataset handling.", "should_trigger": true},
+  {"query": "I already have a CLAUDE.md but want to add a universal AGENTS.md that works for any coding agent. How should they relate?", "should_trigger": true},
+  {"query": "Can you help set up our repo so AI coding agents can work on it effectively? We need build commands, test instructions, and safety guardrails documented.", "should_trigger": true},
+  {"query": "The edge-firmware repo doesn't have agent instructions yet. It needs an AGENTS.md with validation commands, cross-repo dependencies, and Yocto recipe conventions.", "should_trigger": true},
+  {"query": "Write a README.md for our open-source library explaining installation, API usage, and contributing guidelines.", "should_trigger": false},
+  {"query": "Can you review this pull request and leave comments on the code quality?", "should_trigger": false},
+  {"query": "Help me write a CONTRIBUTING.md with guidelines for human contributors — branching strategy, PR process, and code review expectations.", "should_trigger": false},
+  {"query": "I need to create a .cursorrules file with Cursor-specific conventions for our TypeScript project.", "should_trigger": false},
+  {"query": "Write a Makefile for this Go project with build, test, lint, and docker targets.", "should_trigger": false},
+  {"query": "Set up GitHub Actions CI/CD for this repo — lint on PR, test on push, deploy on tag.", "should_trigger": false},
+  {"query": "Create a CLAUDE.md file with project context specifically for Claude Code.", "should_trigger": false},
+  {"query": "Help me write a security policy document for our infrastructure team.", "should_trigger": false},
+  {"query": "I need to document our API endpoints — create an OpenAPI spec from the Go handler code.", "should_trigger": false},
+  {"query": "Can you write a skill for handling database migrations in our Alembic setup?", "should_trigger": false}
+]

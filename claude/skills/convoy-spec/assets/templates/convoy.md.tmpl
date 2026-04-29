@@ -1,0 +1,56 @@
+# <Initiative Title>
+
+## Purpose
+<2-3 sentences. What this convoy delivers as a unit and why it had to be
+coordinated rather than split.>
+
+## Child Task Manifest
+| Task ID | Title | Workflow type | Status |
+|---------|-------|---------------|--------|
+|         |       | work:         | open   |
+
+## Dependency Graph
+```
+<bead-id-1> → <bead-id-3>
+<bead-id-2> → <bead-id-3>
+```
+
+## Convoy-Level Scope
+
+### In-scope (across all tasks)
+- repos:
+- paths:
+
+### Out-of-scope (across all tasks)
+-
+
+### Forbidden paths
+- repo: <repo>
+  paths:
+  -
+
+### Invariants
+-
+
+## Cross-Task Concerns
+<What's true *because* these tasks are bundled together — ordering,
+contention, shared hooks, etc.>
+
+-
+
+## Holdout Policy
+- **enabled:** true | false
+- **scope:** convoy-wide | per-task
+- **categories:**
+- **sealed-artifact ref:** <path or "n/a">
+
+## Merge Policy
+- **atomicity:** all-or-none | sequential | independent
+- **rebase strategy:**
+- **automerge eligibility:**
+
+## Provenance
+- **bead-ready doc:** <path>
+- **review_id:** <slug>
+- **adversarial review outcome:** clean | minor | major
+- **adversarial rounds:** <n>

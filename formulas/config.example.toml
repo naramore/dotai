@@ -1,0 +1,23 @@
+# dotai — config-shape boundary (placeholder)
+#
+# Public formulas reference values from this config; concrete values live in
+# a project-local file or a private overlay (e.g., <overlay>/config/<name>.toml).
+# Copy this file to your project as `config.toml`, fill in the values, and
+# never commit org-specific values to a public repo.
+#
+# Resolution order (first hit wins):
+#   1. ./config.toml                          (project)
+#   2. <private_overlay>/config/<name>.toml   (overlay, if configured)
+#   3. ./config.example.toml                  (this file — placeholders only)
+#
+# Sections are added as formulas need them. Keep new keys grouped by domain
+# (state, mcp, github, linear, posting, etc.) and document each one inline.
+
+[paths]
+public_profile  = "~/Documents/ai-projects/dotai"
+private_overlay = ""              # e.g., "~/Documents/ai-projects/<overlay>"
+
+[posting]
+# Per principle P4 — posting/dispatch gates as second invocations.
+# Default mode is preview; --post / --dispatch on the invocation overrides.
+default_mode    = "preview"       # "preview" | "post"

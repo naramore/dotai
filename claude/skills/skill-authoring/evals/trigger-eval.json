@@ -1,0 +1,22 @@
+[
+  {"query": "I need to create a new skill for our team that standardizes how we write database migration scripts. It should cover Alembic usage, rollback procedures, and testing migrations locally before deploying. Can you set up the full skill directory?", "should_trigger": true},
+  {"query": "The description on my pdf-extractor skill isn't triggering when users ask about parsing invoices. Can you optimize it so it fires more reliably?", "should_trigger": true},
+  {"query": "I just spent 20 minutes walking through a workflow for setting up OAuth2 with Keycloak — can you turn that into a skill I can reuse?", "should_trigger": true},
+  {"query": "My api-design skill is over 600 lines and the SKILL.md is getting unwieldy. Help me refactor it to use references/ properly while keeping the main file self-sufficient.", "should_trigger": true},
+  {"query": "Can you validate whether this skill I wrote follows the agentskills.io spec? I want to make sure the frontmatter is correct and the name matches the directory before I share it.", "should_trigger": true},
+  {"query": "I want to update my existing git-workflow skill to add a section on merge conflict resolution strategies. Read the current version and add to it.", "should_trigger": true},
+  {"query": "This skill file has a bunch of problems — the name uses underscores, the description just says 'helps with stuff', and the instructions are all MUST/NEVER rules. Fix it up.", "should_trigger": true},
+  {"query": "I'm writing a set of reusable agent instructions and want to package them as .skill files for distribution. How should I structure the directories and what goes in the frontmatter?", "should_trigger": true},
+  {"query": "How do I write a good description field for a skill so that Claude actually loads it when relevant? Mine keeps getting ignored.", "should_trigger": true},
+  {"query": "Run the eval suite on my terraform skill — I want to see benchmark results comparing with-skill vs without-skill pass rates and launch the viewer.", "should_trigger": true},
+  {"query": "Can you write a Python script that parses YAML frontmatter from markdown files and extracts the title and tags? I need it for my static site generator.", "should_trigger": false},
+  {"query": "I need to create a new CLI tool using Click that has subcommands for init, build, and deploy. Set up the project structure with pyproject.toml.", "should_trigger": false},
+  {"query": "Help me write documentation for our REST API. I want to generate OpenAPI specs from our Flask route decorators and serve them with Swagger UI.", "should_trigger": false},
+  {"query": "I want to create a VS Code extension that provides snippets for React components. What's the directory structure and how do I write the package.json?", "should_trigger": false},
+  {"query": "Can you create a GitHub Actions workflow that runs our test suite on every PR and deploys to staging on merge to main?", "should_trigger": false},
+  {"query": "I need to write a Terraform module for provisioning an EKS cluster with managed node groups. Include the variables.tf, outputs.tf, and a basic terratest.", "should_trigger": false},
+  {"query": "Help me set up a Jupyter notebook template for data analysis that includes standard imports, plotting configuration, and a table of contents.", "should_trigger": false},
+  {"query": "I want to create a custom ESLint plugin with rules for enforcing our team's naming conventions. How do I structure the npm package?", "should_trigger": false},
+  {"query": "Can you help me write a README.md for my open source project? It should have badges, installation instructions, usage examples, and a contributing guide.", "should_trigger": false},
+  {"query": "I need to create a Homebrew formula for distributing my CLI tool. What fields are required and how do I test it locally before submitting?", "should_trigger": false}
+]

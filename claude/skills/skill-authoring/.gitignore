@@ -1,0 +1,21 @@
+# Python compilation artifacts from running scripts/*.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Eval loop / review outputs (run_loop.py, run_eval.py, generate_report.py
+# write JSON results and HTML viewers; keep these local, never commit)
+*-eval-results*.json
+*-loop-results*.json
+*-benchmark*.json
+*-history*.json
+review-*.html
+report-*.html
+viewer-*.html
+*.log
+
+# Local scratch
+.DS_Store
+*.swp

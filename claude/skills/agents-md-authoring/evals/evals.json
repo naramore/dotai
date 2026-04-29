@@ -1,0 +1,81 @@
+{
+  "skill_name": "agents-md-authoring",
+  "evals": [
+    {
+      "id": 0,
+      "name": "go-service",
+      "prompt": "Create an AGENTS.md for a Go gRPC service called 'order-service'. Here's what you know about the repo:\n- It has a Makefile with targets: build, test, test-all, lint, format, docker-build, run\n- Go 1.22, uses protobuf/gRPC\n- Key directories: cmd/server/, internal/handler/, internal/store/, proto/, e2e/\n- CI: GitHub Actions runs lint + unit tests on PR, ArgoCD on merge\n- Integration tests require a PostgreSQL database (docker-compose.yml exists)\n- E2E tests require a running server + test database\n- Security: handles PII data, has CODEOWNERS on internal/store/encryption/\n- Conventions: conventional commits, golangci-lint, go fmt\n- Single test pattern: go test -race -run TestName ./internal/path/...\nWrite the AGENTS.md to /tmp/eval-outputs/agents-go.md",
+      "expected_output": "A well-structured AGENTS.md covering project overview, commands, architecture, testing tiers, CI/CD, safety rails, and code conventions",
+      "files": [],
+      "expectations": [
+        "The output contains a '## Commands' section with grouped subsections (Build, Test, Lint/Format)",
+        "The output documents the single-test pattern with go test -race -run under a dedicated 'Running a Single Test' heading or equivalent",
+        "The output has a dedicated '## Testing' section with distinct tiers (unit, integration, e2e) as separate items",
+        "The output has a '## Safety Rails' section with structured subsections like 'Forbidden Actions' or 'Requires Human Approval' mentioning the encryption directory",
+        "The output mentions that integration tests require PostgreSQL or docker-compose",
+        "The output documents code conventions including conventional commits",
+        "The output has a '## Project Overview' section as the first content section explaining what order-service is",
+        "The output mentions CI/CD pipeline (GitHub Actions and/or ArgoCD)",
+        "Commands are in fenced code blocks with inline comments explaining each command",
+        "The output is between 40 and 120 lines (concise but comprehensive)"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "infra-repo",
+      "prompt": "Create an AGENTS.md for a firmware-building repository. Here's the context:\n- Repo name: edge-firmware\n- Purpose: Builds firmware images for edge network appliances (gateways, routers) using Yocto recipes\n- Build system: Makefile with targets: arm64, mips, x86_64, sign\n- Build runs as root inside a Docker container on a dedicated build server\n- No test suite — verification is done by flashing built images to reference hardware\n- CI: One GitHub Action for image signature verification only\n- Has 15 numbered runbook files in deploy/rollout/ for human-driven flashing campaigns\n- Security-sensitive: changes to bootloader, partition layout, and signing keys are extremely dangerous\n- Yocto recipes in build/recipes/ configure the entire firmware\n- Shell scripts use set -euo pipefail\n- Cross-repo dependency: images are validated by a separate hardware-test repo\nWrite the AGENTS.md to /tmp/eval-outputs/agents-infra.md",
+      "expected_output": "An infrastructure-focused AGENTS.md with heavy emphasis on safety rails, forbidden actions, credential handling, and cross-repo dependencies",
+      "files": [],
+      "expectations": [
+        "The output has a '## Safety Rails' section with subsections for 'Forbidden Actions' and 'Requires Human Approval'",
+        "The safety section specifically lists bootloader, partition layout, and signing keys as items requiring human approval or forbidden from autonomous modification",
+        "The output documents build commands with make targets in a fenced code block",
+        "The output mentions that builds require root or privileged access in the Project Overview or Commands section",
+        "The output has a '## Cross-Repo Dependencies' section explaining the hardware-test relationship",
+        "The output notes that there is no test suite and verification is by flashing images to reference hardware",
+        "The output mentions the runbook files in deploy/rollout/ and notes they are for human-driven flashing",
+        "The output lists build/recipes/ as a sensitive path or warns about the sensitivity of Yocto recipes",
+        "The output includes a '## Project Overview' section as the first content section",
+        "The output documents the set -euo pipefail convention for shell scripts"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "monorepo",
+      "prompt": "Create AGENTS.md files for a TypeScript monorepo with this structure:\n- Root: pnpm workspaces, Turborepo\n- packages/api/ — Express REST API (Node 20, Jest tests)\n- packages/web/ — Next.js 15 frontend (React 19, Vitest)\n- packages/shared/ — Shared types and utilities (no tests yet)\n- packages/cli/ — CLI tool (Commander.js, no tests yet)\n- Root commands: pnpm install, pnpm turbo run test, pnpm turbo run lint, pnpm turbo run build\n- Package-specific: pnpm --filter <pkg> test, pnpm --filter <pkg> dev\n- CI: GitHub Actions matrix testing all packages\n- Conventions: ESLint + Prettier, strict TypeScript, conventional commits\nWrite the root AGENTS.md to /tmp/eval-outputs/agents-monorepo-root.md and one nested AGENTS.md for the api package to /tmp/eval-outputs/agents-monorepo-api.md",
+      "expected_output": "A root AGENTS.md explaining the monorepo structure plus a nested AGENTS.md for the api package with package-specific details",
+      "files": [],
+      "expectations": [
+        "Two separate files are created: one for root and one for the api package",
+        "The root file has a '## Project Overview' section explaining this is a monorepo",
+        "The root file lists all 4 packages with descriptions in an '## Architecture' section",
+        "The root file documents the --filter pattern for package-specific commands",
+        "The root file has a '## Testing' section that notes different test frameworks per package (Jest for api, Vitest for web)",
+        "The root file mentions that shared and cli packages lack tests",
+        "The root file mentions or explains nested AGENTS.md precedence rules",
+        "The api package file has api-specific commands including dev, test, and single-test pattern",
+        "The api package file mentions Express and Jest specifically",
+        "Both files are under 120 lines each (concise)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "update-stale",
+      "prompt": "Update this existing AGENTS.md that has become stale. The repo migrated from Jest to Vitest, from yarn to pnpm, and added a new packages/mobile/ directory six months ago. None of these changes are reflected.\n\nCurrent AGENTS.md content:\n```\n# AGENTS.md\n\n## Commands\nyarn install\nyarn test          # Jest unit tests\nyarn lint\nyarn build\n\n## Architecture\n- packages/web/ — React frontend\n- packages/api/ — Node backend\n- packages/shared/ — Shared utils\n\n## Conventions\n- ESLint + Prettier\n- yarn workspaces\n```\n\nNew facts:\n- pnpm replaced yarn (pnpm install, pnpm test, pnpm lint, pnpm build)\n- Vitest replaced Jest (vitest run, vitest --watch)\n- New package: packages/mobile/ — React Native app with Expo\n- Added Turborepo: pnpm turbo run test, pnpm turbo run build\n- New CI: GitHub Actions matrix across all 4 packages\nWrite the updated AGENTS.md to /tmp/eval-outputs/agents-updated.md",
+      "expected_output": "An updated AGENTS.md with all stale references replaced and new information added, plus structural enrichment",
+      "files": [],
+      "expectations": [
+        "The output uses pnpm commands instead of yarn",
+        "The output references Vitest instead of Jest",
+        "The output includes packages/mobile/ in the architecture section",
+        "The output mentions Turborepo and turbo run commands",
+        "The output does NOT contain any yarn commands",
+        "The output does NOT reference Jest",
+        "The output mentions the CI matrix across all 4 packages",
+        "The output preserves the existing conventions section (ESLint + Prettier) while updating workspace reference",
+        "The output adds a '## Project Overview' section that wasn't in the original (enrichment beyond migration)",
+        "The output adds a dedicated '## Testing' or '## CI/CD' section that wasn't in the original"
+      ]
+    }
+  ]
+}

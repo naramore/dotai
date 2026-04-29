@@ -1,0 +1,81 @@
+# Bead-Ready: <initiative-slug>
+
+## 1. Initiative Summary
+<3-5 sentence executive summary. What is being built, why, and who is the
+primary beneficiary.>
+
+## 2. Provenance
+- **review_id:** <slug>
+- **artifact paths:**
+  - PRD: <path>
+  - Design doc: <path>
+  - Adversarial synthesis: <path>
+- **upstream maturity level reached:** L0 | L1 | L2 | L3 | L4 | L5
+- **adversarial review outcome:** clean | minor | major
+
+## 3. Initiative Qualities
+| Quality | Value | Rationale |
+|---------|-------|-----------|
+| risk_tier | <critical \| high \| medium \| low> | <why this tier> |
+| blast_radius | <local \| component \| system \| org> | <which systems / cohorts> |
+| reversibility | <instant \| procedural \| costly \| irreversible> | <rollback strategy summary> |
+| security_sensitivity | <none \| indirect \| direct \| critical> | <which subsystems touched> |
+| cross_repo_coupling | <none \| coupled \| chain> | <which repos> |
+| cognitive_demand | <routine \| standard \| frontier> | <complexity drivers> |
+| domain_novelty | <routine \| familiar \| novel> | <prior pattern matches> |
+| template_coverage | <full \| high \| partial \| novel> | <template id if applicable> |
+
+## 4. Scope Boundaries
+
+### In-scope
+- repos:
+- paths:
+- targets / cohorts:
+
+### Out-of-scope
+-
+
+### Forbidden paths
+- repo: <repo>
+  paths:
+  -
+
+### Invariants (must hold across every task)
+-
+
+## 5. Convoy Decomposition
+| Task slug | Title | Workflow type | Risk override | Cognitive override | Files / paths |
+|-----------|-------|---------------|---------------|-------------------|---------------|
+|           |       | work:         |               |                   |               |
+
+## 6. Per-Task Specs
+
+### Task: <slug-1>
+<full task spec body — see assets/templates/task.md.tmpl>
+
+### Task: <slug-2>
+...
+
+## 7. Dependency Graph
+```
+<slug-1> → <slug-3>
+<slug-2> → <slug-3>
+```
+
+## 8. Holdout Plan
+- **categories required:** negative_scope, rollback, idempotency, scope_enforcement
+- **derivation_method:** systematic | augmented | creative | manual
+- **independence:** independent | same_model | same_session
+- **rationale per task:**
+  - <slug-1>: <which categories apply and why>
+
+## 9. Decomposition Self-Validation
+- [ ] Every design-doc implementation section maps to ≥1 task
+- [ ] No two tasks have overlapping `scope_allowed_paths`
+- [ ] No task's AC contradicts another task's AC or the convoy invariants
+- [ ] Dependency graph is acyclic
+- [ ] No task has `risk_tier` higher than the convoy's
+- [ ] Tasks touching identity / key material / signing paths are `critical`
+- [ ] Tasks touching auth / access-control / security-control paths are `high` or higher
+- [ ] Tasks touching boot / init / privilege-escalation paths are `high` or higher
+- [ ] At least one AC per task tests the *intent*, not just the literal words

@@ -1,0 +1,60 @@
+# <Imperative Task Title>
+
+**Type:** task | feature | bug | epic | chore
+**Priority:** P0 | P1 | P2 | P3
+**Estimated effort:** small | small-medium | medium | large
+**Dependencies:** <bead-ids> | none
+**Status:** Draft | Active | Deferred
+
+## Problem
+<2-3 sentences: what's broken/missing and why it matters.>
+
+## Approach
+<Strategy, not implementation details. Tradeoff decisions belong here.>
+
+## Files to Create/Modify
+| File | Action |
+|------|--------|
+| <path> | CREATE / MODIFY / DELETE |
+
+## Content Source / Spec
+<Detailed requirements, patterns to follow, draft content, API contracts.
+Reference existing docs by file + line range when possible.>
+
+## Acceptance Criteria
+- [ ] Literal: <verifiable checkpoint, binary pass/fail>
+- [ ] Intent: <tests the *why*, not just the *what*>
+- [ ] ...
+
+## Out of Scope
+<What this task explicitly does NOT cover.>
+
+## Test Plan
+1. **Syntax:** <validation command → expected result>
+2. **Functional:** <manual verification steps>
+3. **Integration:** <how to verify it works with related tasks / siblings>
+
+---
+
+## Convoy Context
+- **Parent convoy:** <bead-id> — <convoy title>
+- **Position in graph:** depends on <bead-id-1>; blocks <bead-id-3>
+- **Inherited convoy invariants** (must hold after this task merges):
+  - <invariant 1 — copied from convoy spec, do not edit>
+- **Inherited convoy forbidden paths:**
+  - <glob>
+
+## Cross-Task AC References
+<For ACs that depend on or extend another task's contract.>
+
+- "AC-3 depends on AC-7 of <bead-id-1>"
+
+---
+
+## Quality Overrides (only if differing from convoy)
+- workflow_type: <work:feature | work:bugfix | ...>
+- risk_tier: <critical | high | medium | low>           # may only override convoy DOWN
+- blast_radius: <local | component | system | org>      # may only override convoy DOWN
+- reversibility: <instant | procedural | costly | irreversible>
+- security_sensitivity: <none | indirect | direct | critical>
+- cognitive_demand: <routine | standard | frontier>

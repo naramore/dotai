@@ -1,0 +1,125 @@
+{
+  "skill_name": "skill-authoring",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to create a skill that helps agents write Terraform modules. It should cover module structure, variable definitions, output declarations, provider configuration, and testing with terratest. The skill should activate when someone is creating infrastructure-as-code, writing Terraform, or setting up cloud resources. Create the full skill directory with SKILL.md.",
+      "expected_output": "A spec-valid skill directory containing a SKILL.md with correct frontmatter (lowercase name, descriptive description mentioning both what and when), structured body with actionable instructions, and the file stays under 500 lines. No empty optional directories created.",
+      "files": [],
+      "expectations": [
+        "SKILL.md has valid YAML frontmatter enclosed in --- delimiters",
+        "The name field is lowercase alphanumeric with hyphens only, no underscores or uppercase",
+        "The name field matches the created directory name exactly",
+        "The description field explains both what the skill does and when to activate it",
+        "The description mentions specific activation triggers like 'creating Terraform modules' or 'writing infrastructure-as-code'",
+        "The body uses imperative mood rather than 'you should' phrasing",
+        "The body includes at least one concrete code example with a language identifier",
+        "SKILL.md is under 500 lines",
+        "No empty scripts/, references/, or assets/ directories are created",
+        "The skill includes a decision table or structured guidance for when to use different Terraform patterns",
+        "Anti-patterns section is present with reasoning (not just 'don't do X')"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I just had a great workflow for generating changelogs from git history. Here's the conversation transcript — turn this into a skill.\n\nThe conversation is in the file I'm providing.",
+      "expected_output": "A skill extracted from the conversation that captures the changelog generation workflow — grouping conventional commits by type, including PR numbers, excluding chore commits, and outputting to a file. The skill should generalize beyond the specific examples in the conversation.",
+      "files": ["evals/files/conversation-workflow.md"],
+      "expectations": [
+        "SKILL.md has valid frontmatter with name and description fields",
+        "The name field is lowercase with hyphens only",
+        "The description mentions changelog generation and when to activate",
+        "The skill captures the core workflow: parsing conventional commits, grouping by type, formatting as markdown",
+        "The skill generalizes beyond the specific git log commands in the transcript",
+        "Instructions don't hardcode the date '2024-01-01' from the conversation",
+        "The skill mentions excluding certain commit types as a configurable option",
+        "The body includes a concrete example of expected changelog output format",
+        "The skill is self-contained — doesn't require loading reference files for the basic workflow"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Can you review and fix this skill? It has some problems but I'm not sure what exactly. The skill is in the file I'm attaching.",
+      "expected_output": "The agent identifies and fixes all spec violations and anti-patterns: uppercase/underscore in name, vague description, ALL-CAPS directives, reliance on external URLs, no concrete examples, redundant content. The fixed skill should pass the validation checklist.",
+      "files": ["evals/files/bad-skill.md"],
+      "expectations": [
+        "The name is fixed to lowercase with hyphens (e.g., 'code-review' not 'Code_Review')",
+        "The description is rewritten to explain both what and when, with specific trigger contexts",
+        "ALL-CAPS directives like 'MUST ALWAYS' and 'NEVER' are replaced with motivated reasoning",
+        "External URL dependencies are removed or replaced with self-contained content",
+        "Vague instructions like 'Review code' and 'Check for bugs' are replaced with actionable guidance",
+        "The redundant 'you should' phrasing is replaced with imperative mood",
+        "The irrelevant tools table (Docker, Kubernetes, Terraform for a code review skill) is removed or replaced with relevant content",
+        "The fixed skill includes at least one concrete code example",
+        "The fixed skill is under 500 lines"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I have an existing git-workflow skill and I need to add a section about handling merge conflicts — specifically the strategy for rebasing vs merging, when to use interactive rebase, and how to resolve conflicts in common file types (package-lock.json, generated files, etc.). The existing skill is in the file I'm providing. Update it in place.",
+      "expected_output": "The existing skill is updated with a new merge conflict section that integrates naturally with the existing content. The name field still matches, the description is updated if needed, all existing references still work, and the file stays under 500 lines.",
+      "files": ["evals/files/existing-skill-to-update.md"],
+      "expectations": [
+        "The name field 'git-workflow' is preserved unchanged",
+        "Existing sections (Branch Naming, Commit Messages, Pull Request Process, Anti-Patterns) are preserved",
+        "A new section on merge conflict resolution is added with actionable instructions",
+        "The new section includes a decision table or guidance for rebase vs merge",
+        "The new section covers generated files like package-lock.json specifically",
+        "The description is reviewed and updated to mention merge conflicts if not already covered",
+        "The updated SKILL.md is under 500 lines",
+        "New content uses imperative mood consistent with the existing style"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Validate this skill for spec compliance. Tell me every issue you find, categorized by severity. Here's the skill file.",
+      "expected_output": "A comprehensive validation report identifying all spec violations: uppercase in name, description too vague, compatibility field over 500 chars, metadata has non-string values (array), deeply nested reference paths, and the referenced files don't exist.",
+      "files": ["evals/files/spec-violations-skill.md"],
+      "expectations": [
+        "Identifies that 'Data-Analysis' uses uppercase letters, violating the name constraint",
+        "Identifies that the description 'Helps with data.' is too vague — doesn't explain when to activate",
+        "Identifies that the compatibility field exceeds the 500-character limit",
+        "Identifies that metadata contains non-string values (the 'tags' field is an array, 'priority' might be interpreted as non-string)",
+        "Identifies the deeply nested reference paths as a violation of the 'one level deep' guideline",
+        "Notes that the referenced files likely don't exist",
+        "Provides specific fix recommendations for each issue, not just a list of problems"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "This skill is way too long — it's a huge monolith covering every aspect of API design. I need you to refactor it to comply with the size budget. The skill content is in the attached file. Split it appropriately but keep the main SKILL.md self-sufficient.",
+      "expected_output": "The skill is refactored with a lean SKILL.md under 500 lines containing the most essential API design guidance, and detailed sections (webhooks, caching, testing, migration, security) moved to reference files. The main SKILL.md is self-sufficient for common API design tasks.",
+      "files": ["evals/files/oversized-skill.md"],
+      "expectations": [
+        "The refactored SKILL.md is under 500 lines",
+        "Core content (URL structure, HTTP methods, status codes, request/response format) remains in SKILL.md",
+        "Detailed/specialized sections are moved to files under references/",
+        "Each reference file is focused on one topic, not a dumping ground",
+        "SKILL.md includes markdown links to each reference file using relative paths",
+        "SKILL.md remains self-sufficient — an agent can do basic API design without loading references",
+        "The frontmatter (name, description) is preserved correctly",
+        "Reference file paths are one level deep from SKILL.md (e.g., references/webhooks.md not references/advanced/webhooks.md)",
+        "No empty directories are created"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Create a skill for writing database migration scripts using Alembic and SQLAlchemy. It should cover creating migrations, handling data migrations (not just schema changes), rollback strategies, testing migrations locally, and common pitfalls. I want this to be production-quality — include scripts if useful. The skill should work for a team that uses PostgreSQL.",
+      "expected_output": "A production-quality skill with SKILL.md, potentially a helper script in scripts/, and well-organized content. The description should be pushy about activation contexts. Body should include PostgreSQL-specific guidance, concrete Alembic examples, and a decision table for migration types.",
+      "files": [],
+      "expectations": [
+        "SKILL.md has valid frontmatter with a descriptive description",
+        "The description is 'pushy' about activation — mentions contexts like 'even if the user doesn't mention Alembic by name'",
+        "The name is lowercase alphanumeric + hyphens and matches the directory",
+        "Body includes concrete Alembic code examples with Python language identifiers",
+        "Body distinguishes between schema migrations and data migrations with guidance for each",
+        "Rollback strategy is covered with specific Alembic commands (downgrade)",
+        "PostgreSQL-specific considerations are mentioned (e.g., transactional DDL, advisory locks)",
+        "An anti-patterns section explains why common mistakes fail, not just lists them",
+        "If scripts are created, they include error handling and usage instructions",
+        "The overall structure follows progressive disclosure — essentials in SKILL.md, deep dives in references if needed",
+        "SKILL.md is under 500 lines"
+      ]
+    }
+  ]
+}
