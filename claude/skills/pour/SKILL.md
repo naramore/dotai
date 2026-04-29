@@ -108,6 +108,35 @@ The four formulas allowed to mutate the operator state-issue body are: `me-sod`,
 
 For all other formulas: no state-issue body mutation. They may post comments (advisory journal), but only when invoked with `--post`.
 
+## Linear body markdown rules (round-trip discipline)
+
+The Linear renderer normalizes markdown on save. Body content goes in as one shape and comes back transformed. State-mutating formulas must read tolerantly and write defensively, or successive runs accumulate drift.
+
+### When reading the body
+
+Treat these Linear-emitted forms as equivalent to their plain-markdown sources:
+
+- **Bullet style** — Linear normalizes `-` to `*`. Parse both interchangeably.
+- **Issue-reference tags** — bare `ENB-123` written by you is stored back as `<issue id="<uuid>">ENB-123</issue>`. Strip these tags during read; the displayed identifier is the source of truth.
+- **Backslash-escaped tokens** — Linear escapes `*` and `[` in plain text contexts (e.g., `me-*` becomes `me-\*`, `[brackets]` become `\[brackets\]`). Treat `\<char>` as `<char>` when matching content.
+- **Inline-code wrapped tokens** — operator tokens like `` `solana-dev-1` `` are wrapped in backticks specifically to suppress Linear's auto-linker; treat the backtick wrapping as semantically transparent.
+- **Closing fence indentation** — `<!-- me:state:end -->` may be pulled into the previous list item with leading whitespace (Linear interprets it as list-continuation). Match the closing fence with leading-whitespace tolerance: regex `^\s*<!--\s*me:state:end\s*-->`.
+
+### When writing the body
+
+Produce shapes that survive Linear's normalizer:
+
+- **Inline links only.** `[text](url)` always; never `[text][label]` reference-style. Linear collapses reference labels to inline on first render and strips the label block, breaking subsequent reads if a formula tried to re-emit reference style.
+- **Issue references as bare identifiers.** Write `ENB-123`, not `[ENB-123](https://linear.app/...)`. Linear's auto-linker handles the conversion and produces a richer rendered link than a manual one.
+- **Priority tags as parens, not brackets.** Write `(P0)` / `(P1)` / `(P3?)`, never `[P0]`. Linear treats `[X]` as task-checkbox syntax and escape-slashes the brackets visibly.
+- **Backtick-wrap tokens that look like issue identifiers.** Strings matching `<TEAM>-<N>` patterns (e.g., `solana-dev-1`, `cbos-test-12`) get auto-linked to whatever issue happens to share the suffix. Wrap in backticks: `` `solana-dev-1` ``.
+- **Avoid bare `*` inside prose.** `me-*` in flowing text gets escape-slashed. Backtick-wrap as `` `me-*` `` if precision matters; otherwise rephrase ("the `me-` family of formulas").
+- **Closing fence on its own line, no trailing whitespace.** Reduces the chance of list-continuation pulling it into the prior item. (Linear may still indent it — see read-side tolerance above.)
+
+### Body-hash check semantics
+
+The body-hash check (per State mutation rules) MUST hash the **rendered** form (what Linear returns on read), not the **source** form (what was last sent on write). Otherwise the hash always mismatches because Linear's normalization isn't idempotent against your writes. Read → hash → mutate fenced region → write → re-read on next run → hash that.
+
 ## Posting / dispatch gates
 
 - Default mode is preview. Nothing posts to GitHub/Linear/Slack and no beads dispatch unless the user opted in on the invocation.
@@ -146,7 +175,8 @@ Before declaring a formula complete, confirm:
 
 - [ ] Every step's `**Exit criteria:**` was verified, not just attempted.
 - [ ] All parallel-band results were synthesized; nothing dropped silently.
-- [ ] State-mutating formulas: body-hash unchanged since read; single-writer lock released; append-only comment posted with today's date.
+- [ ] State-mutating formulas: body-hash unchanged since read (rendered form, not source form); single-writer lock released; append-only comment posted with today's date.
+- [ ] Body writes used inline `[text](url)` links, bare issue refs, `(Px)` parens, and backtick-wrapped tokens-that-look-like-issue-ids per Linear round-trip rules.
 - [ ] Posting/dispatch: nothing posted/dispatched unless `--post` / `--dispatch` was on the invocation.
 - [ ] Idempotency: re-running this exact invocation now would produce a `(re-run)` comment, not an error or silent overwrite.
 - [ ] Terminal artifact handed to the user (digest, diff, brief, or "no change today").
@@ -164,6 +194,9 @@ If any box can't be ticked, surface what's incomplete and stop. Do not fabricate
 | Prompting mid-run for a missing required var | Disrupts parallel bands; collect all required vars before dispatch |
 | Falling back to freeform when TOML parse fails | The TOML is the contract — refuse and report, don't guess |
 | Sequencing parallelizable steps | Wastes wall-clock; if `needs` doesn't connect them, fan them out in one message |
+| Reference-style markdown links in body writes (`[text][label]`) | Linear's renderer collapses them to inline and strips the label block; subsequent reads see broken refs. Use `[text](url)` directly |
+| Hashing the source form for body-hash check instead of the rendered form | Linear's normalization isn't idempotent against your writes; source-form hashing always mismatches and the check loses its meaning |
+| Writing `[Px]` priority tags or bare `*` in body prose | Linear escapes both visibly (`\[P0\]`, `me-\*`); use parens `(Px)` and backtick-wrap `` `me-*` `` |
 
 ## Quick reference
 
