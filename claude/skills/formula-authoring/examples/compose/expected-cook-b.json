@@ -1,0 +1,22 @@
+{
+  "compose": {
+    "hooks": [
+      {
+        "at": "before",
+        "attach": "notify",
+        "trigger": "after-build"
+      }
+    ]
+  },
+  "formula": "compose-b",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "notify on bond trigger",
+      "id": "notify",
+      "title": "Notify"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

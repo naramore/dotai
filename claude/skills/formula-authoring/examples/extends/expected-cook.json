@@ -1,0 +1,26 @@
+{
+  "formula": "extends-child",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "do setup with {{greeting}}",
+      "id": "setup",
+      "title": "Setup"
+    },
+    {
+      "description": "do the work, depends on inherited setup",
+      "id": "work",
+      "needs": [
+        "setup"
+      ],
+      "title": "Work"
+    }
+  ],
+  "type": "workflow",
+  "vars": {
+    "greeting": {
+      "default": "hello"
+    }
+  },
+  "version": 1
+}

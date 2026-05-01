@@ -1,0 +1,61 @@
+{
+  "compose": {
+    "branch": [
+      {
+        "from": "main",
+        "join": "merge",
+        "steps": [
+          "branch-a",
+          "branch-b",
+          "branch-c"
+        ]
+      }
+    ]
+  },
+  "description": "Demonstrates compose.branch — wires a `from` step to N parallel branches that converge at a `join` step. The branch and join steps must pre-exist in [[steps]]; compose.branch wires them, it does not create them.",
+  "formula": "branch-test",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "the step that fans out into parallel branches",
+      "id": "main",
+      "title": "Main"
+    },
+    {
+      "description": "parallel work A",
+      "id": "branch-a",
+      "needs": [
+        "main"
+      ],
+      "title": "Branch A"
+    },
+    {
+      "description": "parallel work B",
+      "id": "branch-b",
+      "needs": [
+        "main"
+      ],
+      "title": "Branch B"
+    },
+    {
+      "description": "parallel work C",
+      "id": "branch-c",
+      "needs": [
+        "main"
+      ],
+      "title": "Branch C"
+    },
+    {
+      "description": "join point — runs after all parallel branches",
+      "id": "merge",
+      "needs": [
+        "branch-a",
+        "branch-b",
+        "branch-c"
+      ],
+      "title": "Merge"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

@@ -1,0 +1,24 @@
+formula = "loop-count"
+version = 1
+
+[[steps]]
+id    = "before"
+title = "Before"
+description = "runs once before the loop"
+
+[[steps]]
+id    = "go"
+title = "Loop wrapper"
+needs = ["before"]
+[steps.loop]
+count = 3
+[[steps.loop.body]]
+id    = "iter"
+title = "Iteration body"
+description = "executed once per loop count"
+
+[[steps]]
+id    = "after"
+title = "After"
+description = "runs once after the loop"
+needs = ["go"]

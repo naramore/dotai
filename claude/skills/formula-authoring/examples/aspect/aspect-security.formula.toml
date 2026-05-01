@@ -1,0 +1,41 @@
+formula = "aspect-security"
+type    = "aspect"
+version = 1
+description = "Cross-cutting security scans wrapping implement and submit steps."
+
+# Around-advice on `implement`: prescan before, postscan after.
+[[advice]]
+target = "implement"
+[advice.around]
+
+[[advice.around.before]]
+id          = "{step.id}-prescan"
+title       = "Security prescan for {step.id}"
+description = "scan dependencies and review for secrets before implementation"
+
+[[advice.around.after]]
+id          = "{step.id}-postscan"
+title       = "Security postscan for {step.id}"
+description = "SAST scan, hardcoded-secret check, OWASP review on new code"
+
+# Around-advice on `submit`: final pre-merge security check + post-merge verification.
+[[advice]]
+target = "submit"
+[advice.around]
+
+[[advice.around.before]]
+id          = "{step.id}-prescan"
+title       = "Security prescan for {step.id}"
+description = "final vulnerability scan before merge"
+
+[[advice.around.after]]
+id          = "{step.id}-postscan"
+title       = "Security postscan for {step.id}"
+description = "post-merge verification: confirm no new vulnerabilities introduced"
+
+# Pointcuts make the aspect's intended targets discoverable to tooling.
+[[pointcuts]]
+glob = "implement"
+
+[[pointcuts]]
+glob = "submit"

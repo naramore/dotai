@@ -1,0 +1,63 @@
+{
+  "compose": {
+    "aspects": [
+      "aspect-security"
+    ]
+  },
+  "description": "Aspect-base workflow with the security aspect applied via compose.aspects.",
+  "formula": "aspect-secured",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "design the change",
+      "id": "design",
+      "title": "Design"
+    },
+    {
+      "description": "scan dependencies and review for secrets before implementation",
+      "id": "implement-prescan",
+      "title": "Security prescan for implement"
+    },
+    {
+      "description": "implementation work",
+      "id": "implement",
+      "needs": [
+        "design",
+        "implement-prescan"
+      ],
+      "title": "Implement"
+    },
+    {
+      "description": "SAST scan, hardcoded-secret check, OWASP review on new code",
+      "id": "implement-postscan",
+      "needs": [
+        "implement"
+      ],
+      "title": "Security postscan for implement"
+    },
+    {
+      "description": "final vulnerability scan before merge",
+      "id": "submit-prescan",
+      "title": "Security prescan for submit"
+    },
+    {
+      "description": "submit for merge",
+      "id": "submit",
+      "needs": [
+        "implement",
+        "submit-prescan"
+      ],
+      "title": "Submit"
+    },
+    {
+      "description": "post-merge verification: confirm no new vulnerabilities introduced",
+      "id": "submit-postscan",
+      "needs": [
+        "submit"
+      ],
+      "title": "Security postscan for submit"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

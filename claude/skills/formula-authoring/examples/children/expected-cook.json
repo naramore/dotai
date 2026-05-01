@@ -1,0 +1,36 @@
+{
+  "formula": "children-test",
+  "schema_version": 1,
+  "steps": [
+    {
+      "children": [
+        {
+          "description": "first child of phase-1",
+          "id": "subA",
+          "title": "Subtask A"
+        },
+        {
+          "description": "second child of phase-1, depends on subA",
+          "id": "subB",
+          "needs": [
+            "subA"
+          ],
+          "title": "Subtask B"
+        }
+      ],
+      "description": "parent step with child sub-steps",
+      "id": "phase-1",
+      "title": "Phase 1"
+    },
+    {
+      "description": "next phase, depends on phase-1 completion",
+      "id": "phase-2",
+      "needs": [
+        "phase-1"
+      ],
+      "title": "Phase 2"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

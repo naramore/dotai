@@ -1,0 +1,14 @@
+formula = "expansion-callee"
+type    = "expansion"
+version = 1
+
+[[template]]
+id          = "fetch"
+title       = "Fetch source"
+description = "fetch the source data"
+
+[[template]]
+id          = "transform"
+title       = "Transform"
+needs       = ["fetch"]
+description = "transform fetched data"

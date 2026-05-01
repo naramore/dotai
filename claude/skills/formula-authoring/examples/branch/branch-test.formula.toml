@@ -1,0 +1,34 @@
+formula = "branch-test"
+version = 1
+description = "Demonstrates compose.branch — wires a `from` step to N parallel branches that converge at a `join` step. The branch and join steps must pre-exist in [[steps]]; compose.branch wires them, it does not create them."
+
+[[steps]]
+id    = "main"
+title = "Main"
+description = "the step that fans out into parallel branches"
+
+[[steps]]
+id    = "branch-a"
+title = "Branch A"
+description = "parallel work A"
+
+[[steps]]
+id    = "branch-b"
+title = "Branch B"
+description = "parallel work B"
+
+[[steps]]
+id    = "branch-c"
+title = "Branch C"
+description = "parallel work C"
+
+[[steps]]
+id    = "merge"
+title = "Merge"
+description = "join point — runs after all parallel branches"
+
+[compose]
+[[compose.branch]]
+from  = "main"
+steps = ["branch-a", "branch-b", "branch-c"]
+join  = "merge"

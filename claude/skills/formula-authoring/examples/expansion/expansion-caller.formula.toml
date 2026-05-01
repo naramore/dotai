@@ -1,0 +1,13 @@
+formula = "expansion-caller"
+version = 1
+
+[[steps]]
+id          = "prep"
+title       = "Prep"
+description = "prepare inputs"
+
+[[steps]]
+id     = "do-work"
+title  = "Do the work via expansion"
+needs  = ["prep"]
+expand = "expansion-callee"

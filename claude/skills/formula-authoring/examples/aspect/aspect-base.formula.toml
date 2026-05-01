@@ -1,0 +1,20 @@
+formula = "aspect-base"
+type    = "workflow"
+version = 1
+
+[[steps]]
+id          = "design"
+title       = "Design"
+description = "design the change"
+
+[[steps]]
+id          = "implement"
+title       = "Implement"
+description = "implementation work"
+needs       = ["design"]
+
+[[steps]]
+id          = "submit"
+title       = "Submit"
+description = "submit for merge"
+needs       = ["implement"]

@@ -1,0 +1,84 @@
+{
+  "skill_name": "formula-authoring",
+  "evals": [
+    {
+      "id": 0,
+      "name": "expansion-vs-prose",
+      "prompt": "I'm authoring a new bd workflow formula whose third step needs to invoke an existing sub-formula `gather-inputs` end-to-end. Should I use expansion or a prose-directive in the step body? Show me the TOML I should write for the parent step that invokes the sub-formula, plus any required changes to `gather-inputs` itself.",
+      "expected_output": "Recommends expansion as the structurally-correct primitive when the composition is statically known. Provides TOML for both the parent step (with `expand = \"gather-inputs\"`) and the sub-formula (`type = \"expansion\"` + `[[template]]` instead of `[[steps]]`). May note that prose-directive is a runtime-conditional fallback if the target runtime doesn't parse expansion fields, but does not recommend it as the primary answer.",
+      "files": [],
+      "expectations": [
+        "The output names 'expansion' as the correct primitive for this composition pattern",
+        "The output includes a complete TOML snippet showing the parent step with `expand = \"gather-inputs\"`",
+        "The output includes a complete TOML snippet showing the sub-formula needs `type = \"expansion\"` and `[[template]]` instead of `[[steps]]`",
+        "The output references the canonical schema source (`internal/formula/types.go` or `internal/formula/expand.go`) or points to the runnable example at `examples/expansion/`",
+        "The output advises validating with `bd cook` to confirm the expansion materializes as expected",
+        "The output does NOT recommend prose-directive as the primary answer without first considering expansion",
+        "The output does NOT name a specific runtime as authoritative for what the schema supports"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "shared-vars-extends",
+      "prompt": "I have three workflow formulas and they all need the same `[vars.window_hours]` and `[vars.degradation]` declarations with the same defaults. What composition primitive should I use to share these var blocks, and how should I structure the formulas?",
+      "expected_output": "Recommends `extends` with a shared base formula. Provides TOML for the base + one example child showing `extends = [\"<base-name>\"]`. May note that authors should consult their target runtime's docs for whether it parses `extends`; bd cook handles it natively.",
+      "files": [],
+      "expectations": [
+        "The output recommends `extends` as the correct primitive",
+        "The output proposes a base formula that owns the shared vars",
+        "The output includes complete TOML for the base formula showing the [vars.window_hours] and [vars.degradation] blocks",
+        "The output includes a TOML snippet for one child formula showing the `extends = [\"<base-name>\"]` line",
+        "The output does NOT recommend duplicating the var blocks across all three formulas",
+        "The output does NOT recommend `expand` (which is for step-level template substitution, not var sharing)",
+        "The output may reference `examples/extends/` as a runnable example"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "advice-cross-cutting",
+      "prompt": "I want every step in my deploy formula whose `type = \"bash\"` to be wrapped with telemetry: a step before that emits a 'starting' OTel span, and a step after that closes the span and records duration. I don't want to modify the bash steps themselves. Which composition primitive fits?",
+      "expected_output": "Recommends `advice` with `around` (paired before/after lists) for the wrapping pattern. Provides a schema-correct TOML sketch using `target` (glob pattern) + `[advice.around]` with `before` and `after` lists. Notes that advice must live in the same formula as the target steps (does not cross extends boundary in bd v1.0.3) and uses `{step.id}` substitution for inserted-step IDs.",
+      "files": [],
+      "expectations": [
+        "The output recommends `advice` as the correct primitive (not `expand`, not `extends`)",
+        "The output recommends `around` (with paired before/after lists) since the user wants both a pre-step and a post-step on each matched target — or alternatively explains using two separate AdviceRules (one with `before`, one with `after`)",
+        "The output explains that advice wraps existing steps without modifying them (target step is preserved)",
+        "The output includes a TOML sketch with the correct schema — `target` (glob pattern), and either `[advice.around]` with `before = [...]` / `after = [...]` LISTS, OR `[advice.before]` / `[advice.after]` (singular) blocks. NOT the older incorrect `pointcut`/`when`/`steps` shape",
+        "The output uses a glob pattern for `target` (e.g., `\"*.bash\"`, `\"*-bash\"`, or similar) since the user wants to match every bash-typed step, not a single step",
+        "The output mentions `{step.id}` substitution in inserted-step IDs/titles, OR uses literal IDs and notes substitution is available",
+        "The output flags the wrinkle that advice declared in a child formula targeting an extends-inherited step is silently dropped in bd v1.0.3 — recommend keeping advice in the same formula as the target steps",
+        "The output references `Formula.Advice` / `AdviceRule` / `AroundAdvice` (or `internal/formula/types.go` / `advice.go`) as the schema source"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "audit-missed-composition",
+      "prompt": "Review this formula for missed composition opportunities and tell me what I should refactor. The formula reads a GitHub PR queue, runs a security scan, and posts a summary — each is a discrete workflow that other formulas might also use:\n\n```toml\nformula = \"pr-security-summary\"\nversion = 1\n\n[[steps]]\nid = \"read-pr-queue\"\ndescription = \"\"\"Call the PR-listing tool with query='author:@me is:open'. Collect open PRs into a list. For each PR, fetch its diff and metadata.\"\"\"\n\n[[steps]]\nid = \"security-scan\"\nneeds = [\"read-pr-queue\"]\ndescription = \"\"\"For each PR from the previous step, run security checks: scan for secrets in the diff, check for new dependencies with known CVEs, flag any IAM/permission changes. Report findings per PR.\"\"\"\n\n[[steps]]\nid = \"summarize\"\nneeds = [\"security-scan\"]\ndescription = \"\"\"Summarize the security findings into a single report. Post the summary as a comment.\"\"\"\n```",
+      "expected_output": "Walks the decision tree. Identifies that each step is a candidate sub-formula if other formulas would reuse it — recommend extracting and using `expand` for static reuse. Provides at least one concrete TOML refactor snippet. May note that runtime-specific limitations should be checked against the target runtime's docs.",
+      "files": [],
+      "expectations": [
+        "The output walks the decision tree explicitly (extends → expand → advice → compose → prose-directive) rather than just naming primitives",
+        "The output identifies at least one step (e.g., 'read-pr-queue' or 'security-scan') as a candidate sub-formula that should be extracted and invoked via `expand`",
+        "The output provides at least one concrete TOML refactor snippet showing the proposed `expand = \"<sub-formula>\"` structure",
+        "The output may flag that the target runtime should be consulted for which structural primitives it parses, but does not name a specific runtime as canonical",
+        "The output does NOT recommend leaving the formula as-is",
+        "The output does NOT recommend prose-directive as the primary refactor"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "compose-bonding-skepticism",
+      "prompt": "I want to bond my new release formula to a notification formula at an 'after-complete' seam. I read that bd has a `compose` keyword for cross-formula bonding. Show me the TOML and confirm this will work.",
+      "expected_output": "Provides the schema-correct TOML using `[compose]` with `[[compose.bond_points]]` on the source side and `[[compose.hooks]]` on the target side. Flags the verified-behavior caveat: as of bd v1.0.3, the compose declarations roundtrip in the cooked output but no actual cross-formula composition is performed. Recommends empirical verification before depending on it.",
+      "files": [],
+      "expectations": [
+        "The output provides a TOML snippet using the correct schema: `[compose]` + `[[compose.bond_points]]` (with `id` and `after_step` fields) on the source, and `[compose]` + `[[compose.hooks]]` (with `trigger`, `attach`, `at` fields) on the target",
+        "The output does NOT use the older incorrect schema (`source_formula`/`source_point`/`target_formula`/`target_hook` as a single bonding rule, or `BondPoint.StepID`)",
+        "The output explicitly flags that compose materialization is unverified in current bd versions — the declarations roundtrip but no actual cross-formula composition happens",
+        "The output recommends empirical verification (cook a test formula and inspect the proto) before depending on compose",
+        "The output references `Formula.Compose` / `ComposeRules` / `BondPoint` / `Hook` (or `internal/formula/types.go`) as the schema source",
+        "The output does NOT confirm 'this will work' without the verification caveat"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "advice": [
+    {
+      "before": {
+        "description": "lint check",
+        "id": "lint-{step.id}",
+        "title": "Lint before {step.id}"
+      },
+      "target": "design"
+    },
+    {
+      "after": {
+        "description": "post-completion notification",
+        "id": "notify-{step.id}",
+        "title": "Notify after {step.id}"
+      },
+      "target": "submit"
+    },
+    {
+      "around": {
+        "after": [
+          {
+            "description": "scan after implement",
+            "id": "post-scan",
+            "title": "Post-scan"
+          },
+          {
+            "description": "tag the release",
+            "id": "tag-release",
+            "title": "Tag release"
+          }
+        ],
+        "before": [
+          {
+            "description": "scan before implement",
+            "id": "pre-scan",
+            "title": "Pre-scan"
+          },
+          {
+            "description": "checkout working branch",
+            "id": "checkout",
+            "title": "Checkout branch"
+          }
+        ]
+      },
+      "target": "implement"
+    }
+  ],
+  "formula": "advice-three-forms",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "lint check",
+      "id": "lint-design",
+      "title": "Lint before design"
+    },
+    {
+      "description": "design phase",
+      "id": "design",
+      "needs": [
+        "lint-design"
+      ],
+      "title": "Design"
+    },
+    {
+      "description": "scan before implement",
+      "id": "pre-scan",
+      "title": "Pre-scan"
+    },
+    {
+      "description": "checkout working branch",
+      "id": "checkout",
+      "needs": [
+        "pre-scan"
+      ],
+      "title": "Checkout branch"
+    },
+    {
+      "description": "implementation phase",
+      "id": "implement",
+      "needs": [
+        "design",
+        "checkout"
+      ],
+      "title": "Implement"
+    },
+    {
+      "description": "scan after implement",
+      "id": "post-scan",
+      "needs": [
+        "implement"
+      ],
+      "title": "Post-scan"
+    },
+    {
+      "description": "tag the release",
+      "id": "tag-release",
+      "needs": [
+        "post-scan"
+      ],
+      "title": "Tag release"
+    },
+    {
+      "description": "submission phase",
+      "id": "submit",
+      "needs": [
+        "implement"
+      ],
+      "title": "Submit"
+    },
+    {
+      "description": "post-completion notification",
+      "id": "notify-submit",
+      "needs": [
+        "submit"
+      ],
+      "title": "Notify after submit"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

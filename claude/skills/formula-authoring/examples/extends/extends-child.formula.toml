@@ -1,0 +1,9 @@
+formula = "extends-child"
+version = 1
+extends = ["extends-base"]
+
+[[steps]]
+id    = "work"
+title = "Work"
+needs = ["setup"]
+description = "do the work, depends on inherited setup"

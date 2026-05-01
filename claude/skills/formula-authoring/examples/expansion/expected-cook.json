@@ -1,0 +1,29 @@
+{
+  "formula": "expansion-caller",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "prepare inputs",
+      "id": "prep",
+      "title": "Prep"
+    },
+    {
+      "description": "fetch the source data",
+      "id": "fetch",
+      "needs": [
+        "prep"
+      ],
+      "title": "Fetch source"
+    },
+    {
+      "description": "transform fetched data",
+      "id": "transform",
+      "needs": [
+        "fetch"
+      ],
+      "title": "Transform"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

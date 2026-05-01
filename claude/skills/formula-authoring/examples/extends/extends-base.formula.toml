@@ -1,0 +1,10 @@
+formula = "extends-base"
+version = 1
+
+[vars.greeting]
+default = "hello"
+
+[[steps]]
+id    = "setup"
+title = "Setup"
+description = "do setup with {{greeting}}"

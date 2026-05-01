@@ -1,0 +1,58 @@
+formula = "advice-three-forms"
+version = 1
+
+# Three sequential steps form the target workflow.
+[[steps]]
+id          = "design"
+title       = "Design"
+description = "design phase"
+
+[[steps]]
+id          = "implement"
+title       = "Implement"
+description = "implementation phase"
+needs       = ["design"]
+
+[[steps]]
+id          = "submit"
+title       = "Submit"
+description = "submission phase"
+needs       = ["implement"]
+
+# BEFORE advice on `design` — single step inserted before the target.
+# The target's `needs` is auto-rewired to depend on the inserted step.
+# `{step.id}` substitution in id/title produces "lint-design" / "Lint before design".
+[[advice]]
+target = "design"
+
+[advice.before]
+id          = "lint-{step.id}"
+title       = "Lint before {step.id}"
+description = "lint check"
+
+# AFTER advice on `submit` — single step inserted after the target.
+# The inserted step's `needs` is auto-set to depend on the target.
+[[advice]]
+target = "submit"
+
+[advice.after]
+id          = "notify-{step.id}"
+title       = "Notify after {step.id}"
+description = "post-completion notification"
+
+# AROUND advice on `implement` — paired lists of steps wrapping the target.
+# `before` steps are chained (pre-scan → checkout); target's `needs` includes
+# the last before-step. `after` steps are chained starting from the target
+# (post-scan → tag-release).
+[[advice]]
+target = "implement"
+
+[advice.around]
+before = [
+  { id = "pre-scan", title = "Pre-scan", description = "scan before implement" },
+  { id = "checkout", title = "Checkout branch", description = "checkout working branch" }
+]
+after = [
+  { id = "post-scan", title = "Post-scan", description = "scan after implement" },
+  { id = "tag-release", title = "Tag release", description = "tag the release" }
+]

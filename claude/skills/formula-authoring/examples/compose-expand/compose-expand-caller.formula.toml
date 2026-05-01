@@ -1,0 +1,13 @@
+formula = "compose-expand-caller"
+version = 1
+description = "Demonstrates compose.expand — the formula-level alternative to Step.Expand. The named target step is replaced by the named expansion formula's template, just like inline expand, but declared in the [compose] block rather than on the step itself."
+
+[[steps]]
+id    = "do"
+title = "Do work"
+description = "this step will be replaced by sub-tpl's template at cook-time"
+
+[compose]
+[[compose.expand]]
+target = "do"
+with   = "sub-tpl"

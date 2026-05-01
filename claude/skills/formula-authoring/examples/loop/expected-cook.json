@@ -1,0 +1,42 @@
+{
+  "formula": "loop-count",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "runs once before the loop",
+      "id": "before",
+      "title": "Before"
+    },
+    {
+      "description": "executed once per loop count",
+      "id": "go.iter1.iter",
+      "title": "Iteration body"
+    },
+    {
+      "description": "executed once per loop count",
+      "id": "go.iter2.iter",
+      "needs": [
+        "go.iter1.iter"
+      ],
+      "title": "Iteration body"
+    },
+    {
+      "description": "executed once per loop count",
+      "id": "go.iter3.iter",
+      "needs": [
+        "go.iter2.iter"
+      ],
+      "title": "Iteration body"
+    },
+    {
+      "description": "runs once after the loop",
+      "id": "after",
+      "needs": [
+        "go"
+      ],
+      "title": "After"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

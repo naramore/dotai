@@ -1,0 +1,12 @@
+formula = "aspect-secured"
+type    = "workflow"
+version = 1
+description = "Aspect-base workflow with the security aspect applied via compose.aspects."
+extends = ["aspect-base"]
+
+# Apply the aspect formula. The aspect's [[advice]] rules will materialize
+# at cook-time, wrapping the inherited `implement` and `submit` steps.
+# This is the canonical pattern for adding cross-cutting behavior across the
+# extends boundary — the mechanism that makes aspects "compose" with workflows.
+[compose]
+aspects = ["aspect-security"]

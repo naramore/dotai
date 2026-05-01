@@ -1,0 +1,24 @@
+formula = "children-test"
+version = 1
+
+[[steps]]
+id    = "phase-1"
+title = "Phase 1"
+description = "parent step with child sub-steps"
+
+[[steps.children]]
+id    = "subA"
+title = "Subtask A"
+description = "first child of phase-1"
+
+[[steps.children]]
+id    = "subB"
+title = "Subtask B"
+description = "second child of phase-1, depends on subA"
+needs = ["subA"]
+
+[[steps]]
+id    = "phase-2"
+title = "Phase 2"
+needs = ["phase-1"]
+description = "next phase, depends on phase-1 completion"

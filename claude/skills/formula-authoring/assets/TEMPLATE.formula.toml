@@ -1,0 +1,35 @@
+# Starter template for a bd workflow formula.
+#
+# Save as: <name>.formula.toml  (the .formula.toml extension is required for bd discovery)
+# Validate locally:  scripts/cook-draft.sh <name>.formula.toml
+# Reference: claude/skills/formula-authoring/SKILL.md
+
+formula = "TODO-formula-name"   # MUST equal filename without .formula.toml
+version = 1                      # current schema version
+type    = "workflow"             # "workflow" | "expansion" | "aspect" | "convoy"
+description = "TODO one-sentence purpose"
+
+# OPTIONAL — declare variables interpolated into step descriptions via {{var}}.
+# Drop this whole [vars] block if no variables are needed.
+[vars.example_var]
+description = "TODO what this controls"
+default     = "TODO"
+required    = false              # true → runtime must collect a value
+# enum    = ["a", "b"]           # optional — closed set of valid values
+# pattern = "^[a-z]+$"           # optional — regex the value must match
+
+# Steps form a DAG: `needs` is the dependency edge.
+# Step IDs use kebab-case by convention.
+[[steps]]
+id          = "first"
+title       = "Human-readable title"
+description = """
+Multi-line markdown describing what this step does.
+Reference vars with {{example_var}}.
+"""
+
+[[steps]]
+id          = "second"
+title       = "Depends on first"
+needs       = ["first"]
+description = "Runs after `first` completes."

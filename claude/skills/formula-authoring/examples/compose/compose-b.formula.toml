@@ -1,0 +1,17 @@
+formula = "compose-b"
+version = 1
+
+[[steps]]
+id          = "notify"
+title       = "Notify"
+description = "notify on bond trigger"
+
+# Schema-correct shape per bd's ComposeRules.Hooks struct (types.go).
+# The hook subscribes to a bond_point named "after-build" (declared in
+# compose-a). See verified-behavior caveat in compose-a.formula.toml.
+
+[compose]
+[[compose.hooks]]
+trigger = "after-build"
+attach  = "notify"
+at      = "before"

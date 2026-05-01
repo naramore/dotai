@@ -1,0 +1,24 @@
+formula = "prose-directive-example"
+version = 1
+
+[[steps]]
+id    = "prep"
+title = "Prep inputs"
+description = "prepare inputs for the dispatched sub-formula"
+
+[[steps]]
+id    = "gather"
+title = "Gather via runtime-dispatched sub-formula"
+needs = ["prep"]
+description = """
+<runtime> `gather-inputs` with `since=<prep.window_start>`. The composed
+formula returns the standard envelope; treat the directive in this step
+body as opaque text from bd's perspective — only AI-interpretive
+runtimes recognize and dispatch on it at execution time.
+"""
+
+[[steps]]
+id    = "summarize"
+title = "Summarize"
+needs = ["gather"]
+description = "summarize the gathered envelope"

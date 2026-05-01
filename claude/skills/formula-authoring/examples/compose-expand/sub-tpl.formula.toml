@@ -1,0 +1,14 @@
+formula = "sub-tpl"
+type    = "expansion"
+version = 1
+
+[[template]]
+id    = "{target}.fetch"
+title = "Fetch {target}"
+description = "fetch step substituted for the parent's target step"
+
+[[template]]
+id    = "{target}.process"
+title = "Process {target}"
+needs = ["{target}.fetch"]
+description = "process step in the expansion template"

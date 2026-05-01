@@ -1,0 +1,30 @@
+{
+  "compose": {
+    "expand": [
+      {
+        "target": "do",
+        "with": "sub-tpl"
+      }
+    ]
+  },
+  "description": "Demonstrates compose.expand — the formula-level alternative to Step.Expand. The named target step is replaced by the named expansion formula's template, just like inline expand, but declared in the [compose] block rather than on the step itself.",
+  "formula": "compose-expand-caller",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "fetch step substituted for the parent's target step",
+      "id": "do.fetch",
+      "title": "Fetch do"
+    },
+    {
+      "description": "process step in the expansion template",
+      "id": "do.process",
+      "needs": [
+        "do.fetch"
+      ],
+      "title": "Process do"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

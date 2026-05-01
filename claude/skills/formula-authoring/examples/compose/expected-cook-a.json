@@ -1,0 +1,21 @@
+{
+  "compose": {
+    "bond_points": [
+      {
+        "after_step": "build",
+        "id": "after-build"
+      }
+    ]
+  },
+  "formula": "compose-a",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "build artifact",
+      "id": "build",
+      "title": "Build"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

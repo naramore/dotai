@@ -1,0 +1,17 @@
+formula = "compose-a"
+version = 1
+
+[[steps]]
+id          = "build"
+title       = "Build"
+description = "build artifact"
+
+# Schema-correct shape per bd's ComposeRules.BondPoints struct (types.go).
+# As of bd v1.0.3, the bond_point declaration roundtrips through cook
+# but no actual cross-formula composition is performed against compose-b.
+# See ../../references/composition-strategies.md § "compose — Verified behavior".
+
+[compose]
+[[compose.bond_points]]
+id         = "after-build"
+after_step = "build"
