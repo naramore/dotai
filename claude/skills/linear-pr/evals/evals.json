@@ -1,0 +1,103 @@
+{
+  "skill_name": "linear-pr",
+  "evals": [
+    {
+      "id": 0,
+      "name": "no-linear-mcp",
+      "prompt": "I just ran `/linear-pr ENG-456 auth changes` but the Linear MCP server isn't installed in this Claude Code session. What does the skill do?",
+      "expected_output": "Says the skill stops at preflight with the prescribed message about installing/enabling the Linear MCP server. Does not try to construct a Linear URL from a workspace guess, fetch via web, or proceed with the rest of the workflow.",
+      "files": [],
+      "expectations": [
+        "States the skill stops / aborts at the preflight check",
+        "Mentions the prescribed message about installing or enabling the Linear MCP server",
+        "Does NOT suggest constructing a Linear URL from a hardcoded workspace name",
+        "Does NOT suggest fetching the issue via web scraping or the Linear REST API as a fallback",
+        "Does NOT suggest proceeding with branch creation / commit / PR using a guessed title"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "filter-is-pathspec-not-message",
+      "prompt": "I ran `/linear-pr ABC-123 config` and Claude responded with a commit message that started with 'config'. Is that right?",
+      "expected_output": "No — the second argument is a filter for which working-tree changes to stage, not the commit message. The commit subject is always `<ISSUE-ID>: <Linear issue title>`. The word `config` in this case selected files matching `config` (a pathspec or semantic match against `git status`), and the commit message comes from the Linear issue title.",
+      "files": [],
+      "expectations": [
+        "Says the second argument is a stage filter / pathspec, not a commit message",
+        "States the commit subject comes from the Linear issue title (format: `<ISSUE-ID>: <title>`)",
+        "Explains that `config` would have been used to select matching files via pathspec or semantic match against git status",
+        "Confirms the user's observation is incorrect / a misuse",
+        "Does NOT say the filter argument can double as the commit message"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "dirty-tree-rides-along",
+      "prompt": "I have a bunch of uncommitted changes in my working tree right now and I want to ship them under issue PROD-789. Will `/linear-pr PROD-789` stash my changes before switching to main?",
+      "expected_output": "No — uncommitted changes are the expected input to this skill. Git's `switch` and `pull --ff-only` carry uncommitted changes through unless they conflict with incoming work. The skill never stashes silently; if git reports a real conflict it stops and surfaces the error so the user can resolve it. The dirty changes then ride into the new branch where they get staged and committed.",
+      "files": [],
+      "expectations": [
+        "Says the skill does NOT stash the user's changes",
+        "Explains that git switch and git pull carry uncommitted changes along when they don't conflict",
+        "Mentions that on a real conflict the skill stops and surfaces the git error rather than auto-recovering",
+        "Notes that the dirty changes are the expected input — they end up staged and committed on the new branch",
+        "Does NOT recommend the user stash manually before invoking the skill as the normal flow"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "branch-name-and-title-casing",
+      "prompt": "If I invoke `/linear-pr abc-123` (lowercase ID, no filter), what will the new branch be named, what will the commit subject look like, and what will the PR title be? Assume the Linear issue title is 'Allow per-env config overrides'.",
+      "expected_output": "Branch name: `abc-123` (lowercased). Commit subject: `ABC-123: Allow per-env config overrides` (ID uppercased, title from Linear, with co-author trailer appended in the body). PR title: `ABC-123: Allow per-env config overrides` (same as commit subject).",
+      "files": [],
+      "expectations": [
+        "Branch name is `abc-123` (lowercase)",
+        "Commit subject is `ABC-123: Allow per-env config overrides` (ID uppercased, Linear title verbatim)",
+        "PR title matches the commit subject: `ABC-123: Allow per-env config overrides`",
+        "Mentions the Co-authored-by trailer is appended to the commit body",
+        "Does NOT use the literal user input `abc-123` (lowercase) in the commit subject or PR title"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "no-repo-template-uses-bundled",
+      "prompt": "My repo doesn't have any pull request template — no `.github/pull_request_template.md`, no `PULL_REQUEST_TEMPLATE/` directory, nothing. When `/linear-pr DATA-42` runs the PR creation step, what does it use for the body?",
+      "expected_output": "Uses the bundled fallback template at `assets/pull_request_template.md` inside the skill, with the `{{LINEAR_URL}}` placeholder substituted with the actual Linear issue URL fetched from the MCP. The bundled template includes Summary / Testing / Checklist sections plus the Linear URL slot at the top.",
+      "files": [],
+      "expectations": [
+        "Says the skill falls back to a template bundled with the skill itself",
+        "Mentions the path is something like `assets/pull_request_template.md` (or the equivalent inside the skill directory)",
+        "Mentions the `{{LINEAR_URL}}` placeholder is substituted with the actual Linear URL from the MCP response",
+        "Does NOT say the PR body will be empty or just the URL alone",
+        "Does NOT suggest the skill will fail or prompt the user when no repo template exists"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "branch-already-exists",
+      "prompt": "I run `/linear-pr ENG-100` but a branch called `eng-100` already exists locally from an earlier attempt. What does the skill do?",
+      "expected_output": "Stops with a clear message naming the existing branch. Does not check out the existing branch and reuse it, does not auto-rename to `eng-100-2` or similar, does not delete the existing branch. Reusing a branch silently is how prior work gets commingled into this commit.",
+      "files": [],
+      "expectations": [
+        "Says the skill stops / aborts when the branch already exists",
+        "Does NOT suggest the skill should reuse / check out the existing branch and continue",
+        "Does NOT suggest the skill should auto-rename (e.g. `eng-100-2`) or delete the existing branch",
+        "Mentions the reason: branch reuse would commingle prior work / corrupt the PR diff (or equivalent)",
+        "May mention the user should resolve manually (delete or rename) before retrying"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "default-branch-detection",
+      "prompt": "Does `/linear-pr` assume I'm using `main` as my default branch? My team's repo uses `master`.",
+      "expected_output": "No — the skill detects the default branch dynamically via `git symbolic-ref refs/remotes/origin/HEAD` (with `main` as a fallback only if detection fails). It will switch to and pull `master` for your repo without any configuration.",
+      "files": [],
+      "expectations": [
+        "Says the default branch is detected dynamically, not hardcoded to main",
+        "Mentions `git symbolic-ref refs/remotes/origin/HEAD` (or equivalent) as the detection mechanism",
+        "Confirms the skill works for `master` (or any non-main default) without configuration",
+        "May mention `main` is only the fallback if detection fails",
+        "Does NOT say the user must configure / override the default branch manually"
+      ]
+    }
+  ]
+}
