@@ -1,0 +1,80 @@
+{
+  "skill_name": "pour",
+  "evals": [
+    {
+      "id": 0,
+      "name": "choose-wisp-vs-pour",
+      "prompt": "I want to run a release workflow that publishes version 1.2.3 to npm. It's a one-time execution; I don't need to track this in git history. What bd command should I use?",
+      "expected_output": "Recommends `bd mol wisp <formula> --var version=1.2.3` because the work is ephemeral with no audit value. Explains the wisp vs pour distinction (ephemeral vs persistent / git-synced). May mention the formula author can hint via `phase = \"vapor\"`.",
+      "files": [],
+      "expectations": [
+        "Recommends `bd mol wisp` (not `bd mol pour`, not `bd cook`)",
+        "Includes a concrete invocation with `--var version=1.2.3` (or equivalent)",
+        "Explains that wisps are ephemeral and auto-clean, vs pour which is persistent / git-synced",
+        "Does NOT recommend `bd mol pour` for this case (the user explicitly said no audit value needed)",
+        "Does NOT recommend a hand-rolled execution wrapper or invent custom flags"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "execution-loop-walkthrough",
+      "prompt": "I just ran `bd mol pour mol-deploy --var env=prod`. It returned a mol id `mol-deploy-abc123`. What do I do next to actually execute the work?",
+      "expected_output": "Walks the execution loop: `bd mol current mol-deploy-abc123` to see status, identify a `[ready]` step (or use `bd ready --mol`), do the work the step describes, verify completion, then `bd close <step-id>`. Repeat until all `[done]`. Emphasizes verifying completion before closing.",
+      "files": [],
+      "expectations": [
+        "Mentions `bd mol current` (or `bd mol current mol-deploy-abc123`) as the first step to see status",
+        "Mentions `[ready]` (or 'ready') as the status indicator for claimable steps",
+        "Mentions `bd ready --mol` as a way to filter to ready steps",
+        "Mentions `bd close <step-id>` to mark a step done",
+        "Mentions verifying completion / exit criteria BEFORE closing (not just running a command)",
+        "Mentions repeating the loop until all steps are done",
+        "May mention `bd close --continue` or `--suggest-next` as shortcuts",
+        "Does NOT suggest reading the formula TOML and dispatching agents directly bypassing bd"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "parallelize-ready-band",
+      "prompt": "I'm executing mol-multi-review-xyz789. `bd ready --mol mol-multi-review-xyz789` returns 4 steps: security-review, perf-review, style-review, test-quality-review. They have no dependencies on each other and read independent surfaces. How should I work through them?",
+      "expected_output": "Recommends parallel fan-out via concurrent `Agent` tool calls in a single message. Notes the synthesis requirement: merge findings into a coherent input before any downstream step runs (not raw concatenation). Mentions `bd mol show --parallel` as a way to see formula-declared parallel groups. May caveat with 'don't parallelize if steps share mutable state'.",
+      "files": [],
+      "expectations": [
+        "Recommends parallel dispatch (not sequential one-at-a-time)",
+        "Mentions the `Agent` tool, parallel tool calls in a single message, or equivalent concurrent-dispatch mechanism",
+        "Mentions synthesizing / merging the parallel results before the next dependent step",
+        "Mentions checking that the steps are actually independent (don't share state) before parallelizing",
+        "May mention `bd mol show --parallel` to see formula-declared parallel groups",
+        "Does NOT suggest closing all four with a single bd close command without doing the work for each",
+        "Does NOT suggest sequential one-at-a-time as the primary recommendation"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "project-override-wins",
+      "prompt": "My project's CLAUDE.md has this rule: 'For any deploy formula, pause and ask the human for explicit approval before closing the `staging-deploy` step.' I'm executing mol-deploy and the next ready step is `staging-deploy`. The skill's default discipline says I should verify completion and close. Which rule applies?",
+      "expected_output": "The project rule (from CLAUDE.md) overrides the skill's default discipline. Pause for human approval before closing the staging-deploy step. References the override priority: formula description, mol root issue body/labels, project CLAUDE.md/AGENTS.md, project overlay skills — all override defaults.",
+      "files": [],
+      "expectations": [
+        "Says the project rule wins / takes precedence / overrides the default",
+        "Explicitly says to pause for human approval before closing staging-deploy",
+        "Does NOT auto-close the step using the default discipline",
+        "May reference the override priority list (formula description → mol root → project CLAUDE.md → overlay skills)",
+        "Does NOT suggest the project rule should be ignored or overridden by the default"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "preview-via-dry-run",
+      "prompt": "Before actually creating the mol, I want to see what `bd mol pour mol-feature --var name=auth` would produce. Should I write a wrapper script that pre-validates and prints the proto, or is there a built-in way?",
+      "expected_output": "Recommends `bd mol pour mol-feature --var name=auth --dry-run` (or equivalent built-in flag). May also mention `bd cook mol-feature --var name=auth` for the proto JSON inspection. Explicitly advises against inventing custom preview wrappers (anti-pattern: fragmenting the operator experience).",
+      "files": [],
+      "expectations": [
+        "Recommends the built-in `--dry-run` flag on `bd mol pour`",
+        "May additionally mention `bd cook` as a way to see the proto JSON",
+        "Explicitly advises against writing a custom wrapper for this purpose",
+        "Does NOT recommend custom flag vocabulary (`--preview`, `--check`, `--gate`, etc.)",
+        "Does NOT suggest a multi-step manual workflow when a single flag exists"
+      ]
+    }
+  ]
+}
