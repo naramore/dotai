@@ -11,3 +11,13 @@ id     = "do-work"
 title  = "Do the work via expansion"
 needs  = ["prep"]
 expand = "expansion-callee"
+
+# Downstream consumer demonstrating that inline Step.Expand leaves
+# `needs = ["do-work"]` dangling in cooked output (bd v1.0.3). Use
+# [compose] [[compose.expand]] instead if you need this dep auto-rewired
+# to the last template step (see ../compose-expand/).
+[[steps]]
+id          = "report"
+title       = "Report"
+needs       = ["do-work"]
+description = "needs is preserved verbatim; do-work no longer exists post-cook"

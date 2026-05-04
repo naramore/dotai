@@ -118,6 +118,9 @@ What composes cleanly with what (verified empirically against bd v1.0.3). ✅ = 
 | `Step.Loop` × `[[steps.children]]` on the same wrapper step | ⚠️ children are LOST after loop unrolling |
 | `Step.Loop` × `[compose] [[branch]]` referencing the loop wrapper | ❌ loop dissolves the wrapper before branch wires it |
 | `Step.Expand` × `[compose] [[expand]]` on the same target | ❌ Step.Expand consumes the step first; compose.expand can't find it |
+| Parent downstream `needs = ["<expanded-id>"]` × inline `Step.Expand` | ❌ left dangling in cooked output (bd v1.0.3) |
+| Parent downstream `needs = ["<expanded-id>"]` × `[compose] [[compose.expand]]` | ✅ auto-rewired to last template step |
+| Template `id = "{target}.<verb>"` × `[compose] [[compose.expand]]` | ✅ `{target}` substituted to parent step id; rewiring still works |
 | `[[pointcuts]]` declared with no advice referencing them | ✅ roundtrip as metadata; no effect on cook |
 
 **General rule:** any control-flow primitive that *dissolves* the wrapper step (loop, expand) loses other primitives attached to that same step. Attach them to a sibling step or to one of the body/template steps instead.
@@ -137,6 +140,7 @@ These follow gastown's production formulas (`gastown/internal/formula/formulas/`
 | **`notes`** | Use for hand-off context that shouldn't crowd the description | `"Reproduced via session-replay; see INC-4523"` |
 | **Var names** | snake_case | `[vars.window_hours]`, `[vars.target_environment]` |
 | **`{{var}}` substitution** | Only walks step `description` strings — does NOT walk into TOML tables; runtime handles those | `description = "Deploy to {{environment}}"` |
+| **Var substitution at expansion time** | When a template formula is materialized into a parent via `expand` / `compose.expand`, bd substitutes the expansion's vars-with-defaults into template `description` strings using the default value (unless the parent binds the var). Required-no-default vars stay as `{{name}}`. Avoid literal `{{name}}` tokens in prose that *describes* placeholders, or accept that they'll render as the default in cooked output | `default = "partial"` → `` `{{degradation}}` `` becomes `` `{partial}` `` after cook |
 | **Dependency declaration** | Use `needs`, not `depends_on`. Both fields exist and roundtrip independently; production formulas use `needs` | `needs = ["design"]` |
 
 Browse [gastown's formula corpus](https://github.com/gastownhall/gastown/tree/main/internal/formula/formulas) for ~50 worked examples in production.
@@ -164,7 +168,29 @@ needs  = ["setup"]
 expand = "gather-inputs"
 ```
 
-…paired with a `gather-inputs.formula.toml` of `type = "expansion"` declaring `[[template]]` instead of `[[steps]]`. After cooking, the parent's `gather` step is replaced by the template's full DAG and the cooked proto reflects the actual composition. The `expand` shape survives `bd cook`, can be reasoned about by tooling, and won't drift across consumers.
+…paired with a `gather-inputs.formula.toml` of `type = "expansion"` declaring `[[template]]` instead of `[[steps]]`. After cooking, the parent's `gather` step is replaced by the template's full DAG and the cooked proto reflects the actual composition.
+
+**One wrinkle**: inline `expand` leaves downstream `needs = ["gather"]` dangling in cooked output (bd v1.0.3 — see [`references/composition-strategies.md`](references/composition-strategies.md) § 2 edge cases). If any sibling step in the parent waits on the expanded step, switch to the `[compose] [[compose.expand]]` form, which auto-rewires those references to the expansion's last template step:
+
+```toml
+[[steps]]
+id          = "gather"
+title       = "Fan-out reads via gather-inputs"
+needs       = ["setup"]
+description = "stub; replaced by gather-inputs at cook time"
+
+# ...other steps including downstream consumers like:
+[[steps]]
+id    = "diff"
+needs = ["gather"]      # auto-rewired to the last template step after cook
+
+[compose]
+[[compose.expand]]
+target = "gather"
+with   = "gather-inputs"
+```
+
+The `expand` family survives `bd cook`, can be reasoned about by tooling, and won't drift across consumers.
 
 The trap — picking prose where a structural primitive would do — is the most common authoring mistake bd's broader schema is designed to prevent. The decision tree above surfaces the structural primitive first; the cook script catches the mistake if it slips through.
 

@@ -22,6 +22,14 @@
         "fetch"
       ],
       "title": "Transform"
+    },
+    {
+      "description": "needs is preserved verbatim; do-work no longer exists post-cook",
+      "id": "report",
+      "needs": [
+        "do-work"
+      ],
+      "title": "Report"
     }
   ],
   "type": "workflow",

@@ -5,7 +5,7 @@ Demonstrates template substitution: a step in the caller marked with `expand = "
 ## Files
 
 - `expansion-callee.formula.toml` — sub-formula with `type = "expansion"` and `[[template]]` steps (`fetch → transform`)
-- `expansion-caller.formula.toml` — caller with a `do-work` step that expands the callee
+- `expansion-caller.formula.toml` — caller with a `do-work` step that expands the callee, plus a `report` step demonstrating the dangling-needs wrinkle
 - `expected-cook.json` — `bd cook expansion-caller` output (with `source` field stripped)
 
 ## Cook target
@@ -32,4 +32,6 @@ Substitution is **lexical** (string replace) — it works wherever the placehold
 
 ## Wrinkle to watch
 
-If the caller has any *downstream* step with `needs = ["do-work"]`, bd v1.0.3 leaves the dependency dangling (the expanded id no longer exists). This example deliberately has no downstream dependents on `do-work` to stay clean. If you need downstream wiring, verify your bd version's rewiring behavior with a smoke test before depending on it.
+If the caller has any *downstream* step with `needs = ["do-work"]`, bd v1.0.3 leaves the dependency dangling — the expanded id no longer exists in cooked output, but the `needs` reference is preserved verbatim. The `report` step in this example demonstrates exactly that: see `report.needs = ["do-work"]` in `expected-cook.json` even though there's no `do-work` step left.
+
+If you need downstream consumers to wait on the expansion, switch to `[compose] [[compose.expand]]` (see [`../compose-expand/`](../compose-expand/)), which auto-rewires `needs = ["<target>"]` to the expansion's last template step.

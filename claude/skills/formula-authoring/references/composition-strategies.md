@@ -105,13 +105,14 @@ See [`../examples/expansion/`](../examples/expansion/) — `expansion-callee.for
 
 ### Edge cases
 
-- **Downstream `needs` rewiring** — if a downstream step in the parent has `needs = ["<expanded-step-id>"]`, behavior in bd v1.0.3 is to leave the dependency dangling (the expanded step's id no longer exists in the cooked output). Author defensively: avoid downstream steps that depend on the expanded step, or verify your bd version's rewiring behavior
+- **Downstream `needs` is left DANGLING with inline `Step.Expand`** (bd v1.0.3, verified). If a downstream step in the parent has `needs = ["<expanded-step-id>"]`, the expanded step's id is gone from cooked output and the dep stays as-is, pointing at nothing. **Use `[compose] [[compose.expand]]` instead** (§ 5a) when downstream steps need to wait for the expansion — that form rewires `["<expanded-id>"]` to the last template step automatically.
 - **Recursion** — an expansion that itself contains `expand` references is allowed; watch for cycles
 - **Type field is required** — without `type = "expansion"`, the `[[template]]` block isn't recognized
+- **Template var defaults are inlined into prose at materialization time.** When the parent expand doesn't bind the expansion's vars, bd substitutes their defaults into the template's `description` strings. So `` `{{degradation}}` `` (default `"partial"`) in a template description becomes `` `{partial}` `` in the cooked parent. Required-no-default vars (`required = true`, no `default`) are preserved as `{{name}}`. If you need a placeholder to stay verbatim in cooked output (e.g., because the prose is *describing* the placeholder), give it no default OR rephrase to avoid the literal `{{name}}` token.
 
 ### Verified behavior
 
-✅ bd v1.0.3 cooks expansion end-to-end. Template steps replace the parent step in the cooked proto. The downstream-rewiring caveat above is the one known wrinkle.
+✅ bd v1.0.3 cooks expansion end-to-end. Template steps replace the parent step in the cooked proto. The first template step inherits the parent's `needs`. **Downstream rewiring depends on the form**: dangling for inline `Step.Expand`, automatic for `[compose] [[compose.expand]]`.
 
 ---
 
@@ -327,7 +328,17 @@ target = "do"
 with   = "sub-tpl"
 ```
 
-Materializes identically to inline `Step.Expand`. Use when you want to keep step bodies and composition rules visually separated, or when the expansion is layered on rather than intrinsic to the step. See [`../examples/compose-expand/`](../examples/compose-expand/).
+**Not identical to inline `Step.Expand`** (bd v1.0.3): downstream `needs = ["<target>"]` references in the parent are auto-rewired to the LAST template step. Inline `Step.Expand` leaves them dangling. Prefer `compose.expand` whenever the parent has steps that depend on the expanded step.
+
+**Optional `{target}` substitution for template ids.** The expansion's template can use `{target}` in `id`, `title`, and `needs` strings; bd substitutes the parent step id. So a template declaring `id = "{target}.fetch"` produces `expanded.fetch` (when targeted at a step `expanded`) or `gather.fetch` (when targeted at `gather`). Without `{target}`, raw template ids are used as-is. Use `{target}` to:
+
+- Avoid id collisions when the same expansion is materialized into N different parent steps in one formula
+- Avoid collisions between template ids and sibling step ids in the parent (e.g., the parent already has a step named `fetch`)
+- Make cooked output self-documenting about which expansion produced which step
+
+The `{target}` substitution is purely cosmetic for ids — it does not affect downstream-needs rewiring (which already works on raw template ids).
+
+See [`../examples/compose-expand/`](../examples/compose-expand/) (uses `{target}`) and [`../examples/expansion/`](../examples/expansion/) (raw template ids, inline form).
 
 ### 5b. `compose.branch` — parallel branches with join ✅
 
