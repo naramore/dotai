@@ -11,9 +11,14 @@ description: >-
   quality" / "make it shine"; also load before finalizing a non-trivial
   module, RFC, or README, when starting a refactor on existing code
   (which counts as the draft), and any time the user wants higher
-  quality than a single pass would give. Skip on trivial changes
-  (under ~10 lines or obvious one-line fixes) where overhead exceeds
-  value.
+  quality than a single pass would give. Also covers two variants of
+  the same single-lens-narrowing principle — parallel fan-out + synthesis
+  and iterative-convergence with severity gate (see
+  references/parallel-review.md) — load also for "adversarial review",
+  "parallel review legs", "fan-out + synthesis", "convergence loop",
+  multi-stage PRD/design review, or any review pattern with independent
+  lenses. Skip on trivial changes (under ~10 lines or obvious one-line
+  fixes) where overhead exceeds value.
 ---
 
 # Rule of Five — Iterative Refinement Review
@@ -151,6 +156,15 @@ Each pass examines the *same artifact* through one lens. Resist re-litigating ea
 ## Where it fits
 
 Run after tests and lint pass — Rule of Five is self-review, not debugging. By the time a human reviewer sees the PR, it has been through four focused passes, so the human can spend their attention on architecture and design rather than naming and missed edge cases.
+
+## Variants
+
+Sequential-compounding (everything above) is the canonical rule-of-five — same artifact, lenses applied serially, each pass inheriting prior context. Two other shapes share the **single-lens-narrowing principle** but trade context for independence:
+
+- **Parallel fan-out + synthesis** — N independent single-lens legs run in parallel against the same artifact; an explicit synthesis step dedups, ranks, and resolves contradictions. Buys independence (no leg anchored by another's framing) at the cost of compounding context. Used in adversarial review, PRD review, design exploration.
+- **Iterative-convergence with severity gate** — parallel fan-out + re-probe loop, with a hard round ceiling and severity-classified findings driving whether to proceed, re-probe, or escalate. Used when the artifact mutates between rounds and you need to verify the mutation didn't introduce new issues.
+
+See [`references/parallel-review.md`](references/parallel-review.md) for the variant shapes, a choose-which rubric (independence-vs-compounding, universal-vs-domain-specific lenses, when to fall back to a single pass), worked examples, and fan-out-specific anti-patterns.
 
 ## Anti-patterns
 
