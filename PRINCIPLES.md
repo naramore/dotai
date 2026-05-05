@@ -172,3 +172,34 @@ The right answer per surface is determined by whether it bears judgment.
 or judgment-bearing? Mechanical → `dotai/formulas/library/`. Judgment-
 bearing → the overlay's `formulas/library/` until validated. Mixed →
 split: mechanical core in `dotai`, judgment-bearing config in the overlay.
+
+## P10. Earn the next tier of orchestration
+
+**Principle:** A formula must be trustworthy at one tier of orchestration
+before it earns the next. Single-shot manual execution earns inclusion in
+another formula (`extends` / `expand`). Composed multi-step execution
+earns dispatch by an agent team. Agent-team dispatch earns supervisor /
+convergence orchestration. The same gate applies recursively at every
+layer; tier counts are illustrative, the gating discipline is the axiom.
+
+**Why:** Each tier multiplies the cost of latent bugs. A flaky standalone
+formula is annoying; a flaky formula inside a convergence loop is a
+runaway, and a flaky one fanned out across an agent team is a mess no
+human reviewer can catch up with. Orchestration amplifies — it does not
+sanitize. The harness cannot validate what the formula itself has not
+proven. P3 governs *where* judgment is validated; P10 governs *when* a
+validated formula has earned more orchestration around it.
+
+**Heresy this prevents:** Wrapping a formula in a supervisor loop, agent
+team, or fan-out because the orchestrator is exciting, before the formula
+has survived single-author single-shot use against real inputs. Equally:
+embedding a formula via `extends` / `expand` before it has run cleanly
+on its own. "We'll harden it once it's wired up" — same trap as P2 in a
+different dimension.
+
+**Operationalized by:** Promotion gates rather than calendar gates — a
+formula earns composition when it has run cleanly N times standalone
+against real data, and earns supervisor / agent-team orchestration when
+its composed form has run cleanly M times under direct human dispatch.
+The thresholds and the concrete tier names live in the overlay (per P9,
+since the right numbers are judgment); the gating discipline lives here.
