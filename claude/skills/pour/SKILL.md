@@ -90,9 +90,12 @@ Step 3 above ("do the work") has two sub-decisions: which agent does it, and whe
 |---|---|
 | Research, codebase exploration, "find all uses of X" | `Explore` |
 | Multi-step design, planning, sequencing decisions | `Plan` |
+| Review / verification / audit / second-opinion grading | `general-purpose` *in a fresh subagent* — implementer and reviewer should not share conversation context |
 | Everything else | `general-purpose` or a specialized agent if one fits |
 
 A formula author may override per step with an HTML-comment directive in the step body (e.g. `<!-- agent: Explore -->`). Honor the override when present.
+
+**Why fresh-context dispatch for review steps?** When the same agent that wrote the implementation also self-reviews it, confirmation bias is real — partial-satisfaction verdicts that should have been "not satisfied" slip through; gaps the implementer didn't see remain unseen because the implementer is the one looking. Dispatching the review to a *fresh* subagent (no prior conversation context, given only the diff + the spec + the preflight baseline) is the lightest-weight way to get a second opinion. This matters most for `self-review`-shaped steps in mol-dev* / mol-verify-style formulas, but applies any time a step's intent is "grade what the prior step produced." Don't inline a review step just because it "looks conversation-tractable" to the orchestrator — that defeats the second-opinion benefit and the audit trail loses the independent-judgment signal.
 
 **Parallelize ready bands when reasonable.** `bd ready --mol <id>` returns *all* currently-ready steps; `bd mol show <id> --parallel` highlights groups bd has identified as parallel. When multiple steps are independent, dispatch them concurrently via parallel `Agent` calls in a single message rather than sequentially.
 
