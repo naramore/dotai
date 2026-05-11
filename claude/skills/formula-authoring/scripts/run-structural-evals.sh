@@ -34,6 +34,7 @@ declare -a tests=(
   "compose-expand:compose-expand-caller:expected-cook.json"
   "branch:branch-test:expected-cook.json"
   "loop:loop-count:expected-cook.json"
+  "loop:loop-until:expected-cook-until.json"
   "children:children-test:expected-cook.json"
   "prose-directive:prose-directive-example:expected-cook.json"
 )

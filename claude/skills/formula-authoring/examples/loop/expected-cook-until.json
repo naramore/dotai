@@ -1,0 +1,37 @@
+{
+  "formula": "loop-until",
+  "schema_version": 1,
+  "steps": [
+    {
+      "description": "Sketch the change before implementing.",
+      "id": "design",
+      "title": "Design"
+    },
+    {
+      "description": "Implement (or revise) the change.",
+      "id": "dev-review.iter1.dev",
+      "labels": [
+        "loop:{\"max\":3,\"until\":\"steps.complete \\u003e= 5\"}"
+      ],
+      "title": "Implement"
+    },
+    {
+      "description": "Review the implementation. Approve, or leave concrete revision asks.",
+      "id": "dev-review.iter1.review",
+      "needs": [
+        "dev-review.iter1.dev"
+      ],
+      "title": "Review"
+    },
+    {
+      "description": "Land the change once review approves.",
+      "id": "ship",
+      "needs": [
+        "dev-review"
+      ],
+      "title": "Ship"
+    }
+  ],
+  "type": "workflow",
+  "version": 1
+}

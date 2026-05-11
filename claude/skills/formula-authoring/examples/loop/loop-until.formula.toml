@@ -1,0 +1,40 @@
+formula = "loop-until"
+version = 1
+
+# Optional dev↔review loop, bounded by a max iteration count.
+#
+# Models: implement a change, review it, repeat until the reviewer signals
+# approval — but never more than `max` passes.
+#
+# Cook behavior: the loop wrapper cooks to a SINGLE iteration step with the
+# loop config carried in `labels` metadata (e.g. loop:{"max":3,"until":"..."}).
+# Unrolling does NOT happen at cook-time. The runtime is expected to evaluate
+# the until condition after each iteration and decide whether to re-dispatch.
+
+[[steps]]
+id          = "design"
+title       = "Design"
+description = "Sketch the change before implementing."
+
+[[steps]]
+id    = "dev-review"
+title = "Dev / review loop"
+needs = ["design"]
+[steps.loop]
+max   = 3
+until = "steps.complete >= 5"
+[[steps.loop.body]]
+id          = "dev"
+title       = "Implement"
+description = "Implement (or revise) the change."
+[[steps.loop.body]]
+id          = "review"
+title       = "Review"
+description = "Review the implementation. Approve, or leave concrete revision asks."
+needs       = ["dev"]
+
+[[steps]]
+id          = "ship"
+title       = "Ship"
+description = "Land the change once review approves."
+needs       = ["dev-review"]
